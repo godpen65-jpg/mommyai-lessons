@@ -1,0 +1,82 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🤖 마미AI 레슨 모음</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'Jua', sans-serif; max-width: 640px; margin: 0 auto; padding: 24px 16px 60px; background: #fffbe9; color: #4a3f2a; }
+  h1 { font-size: 30px; margin-bottom: 2px; }
+  p.sub { color: #a3936a; font-size: 15px; margin-top: 0; margin-bottom: 22px; }
+  .card {
+    background: #fffef7;
+    border: 2.5px dashed #f0d888;
+    border-radius: 18px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    box-shadow: 3px 4px 0 #f6e6b0;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .card:nth-child(3n+1) { border-color: #f0d888; box-shadow: 3px 4px 0 #f6e6b0; }
+  .card:nth-child(3n+2) { border-color: #f7cf9f; box-shadow: 3px 4px 0 #fbe4c8; }
+  .card:nth-child(3n) { border-color: #cfe3b0; box-shadow: 3px 4px 0 #e3f0cf; }
+  .card.done { opacity: 0.5; }
+  .row1 { display: flex; align-items: center; gap: 10px; }
+  .num { font-weight: bold; color: #d9a441; font-size: 17px; min-width: 42px; }
+  .title { flex: 1; font-size: 18px; font-weight: 700; }
+  .go { background: #ffe9a8; color: #7a5c1e; border: 2px solid #f0d27a; border-radius: 999px; padding: 6px 14px; font-size: 14px; text-decoration: none; white-space: nowrap; font-weight: 700; }
+  .done .go { background: #f0f0f0; color: #aaa; border-color: #ddd; }
+  memo { display: block; }
+  textarea { width: 100%; border: 2px dashed #eadfc0; border-radius: 12px; padding: 8px 10px; font-size: 15px; font-family: 'Jua', sans-serif; resize: vertical; min-height: 34px; background: #fffef9; }
+  .chk-label { font-size: 15px; color: #8a7a55; display: flex; align-items: center; gap: 6px; }
+  input[type="checkbox"] { width: 18px; height: 18px; accent-color: #e8b64a; }
+</style>
+<body>
+  <h1>🤖 마미AI 레슨 모음 ✨</h1>
+  <p class="sub">완료 체크 & 메모는 이 기기에만 저장돼요 🍯 버튼을 누르면 원래 사이트로 이동해요 (로그인 필요)</p>
+  <div id="list"></div>
+
+<script>
+const lessons = [
+  {n:"L001", t:"클로드 쉽게 설치하고 순식간에 섭렵하기", url:"https://thinkingbrainschool.com/mommyai/code/lesson001"},
+  {n:"L002", t:"클로드로 6분만에 나만의 AI 비서 만들기", url:"https://thinkingbrainschool.com/mommyai/code/lesson002"},
+  {n:"L003", t:"같은 AI, 다른 결과", url:"https://thinkingbrainschool.com/mommyai/paid/lesson001"},
+  {n:"L004", t:"AI 말, 알아듣기", url:"https://thinkingbrainschool.com/mommyai/paid/lesson002"},
+  {n:"L005", t:"한 번에 안 나와도 괜찮아", url:"https://thinkingbrainschool.com/mommyai/paid/lesson003"},
+  {n:"L006", t:"보여주면 더 잘해요", url:"https://thinkingbrainschool.com/mommyai/paid/lesson004"},
+];
+
+const key = id => "mommyai_" + id;
+
+function render() {
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+  lessons.forEach(l => {
+    const saved = JSON.parse(localStorage.getItem(key(l.n)) || '{"done":false,"memo":""}');
+    const card = document.createElement("div");
+    card.className = "card" + (saved.done ? " done" : "");
+    card.innerHTML = `
+      <div class="row1">
+        <span class="num">${l.n}</span>
+        <span class="title">${l.t}</span>
+        <a class="go" href="${l.url}" target="_blank">▶ 보러가기</a>
+      </div>
+      <div class="row1">
+        <label class="chk-label"><input type="checkbox" ${saved.done ? "checked" : ""}> 완료했어요 🎉</label>
+      </div>
+      <textarea placeholder="✏️ 메모 (오늘 배운 것, 다시 볼 부분 등)">${saved.memo}</textarea>
+    `;
+    const checkbox = card.querySelector('input[type="checkbox"]');
+    const textarea = card.querySelector('textarea');
+    const save = () => {
+      localStorage.setItem(key(l.n), JSON.stringify({done: checkbox.checked, memo: textarea.value}));
+      card.className = "card" + (checkbox.checked ? " done" : "");
+    };
+    checkbox.addEventListener("change", save);
+    textarea.addEventListener("input", save);
+    list.appendChild(card);
+  });
+}
+render();
+</script>
+</body>
